@@ -2,7 +2,7 @@
 
 Simple, power efficient software for my infrared motion detection project.
 
-![](resources/outdoors.jpg)
+![](resources/images/outdoors.jpg)
 
 ## Hardware
 
