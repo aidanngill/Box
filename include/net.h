@@ -30,18 +30,4 @@ bool box_wifi_init(const char* ssid, const char* password);
  */
 void box_wifi_disconnect();
 
-/**
- * @brief Upload a file to the defined FTP server.
- * 
- * @param data File buffer.
- * @param length Length of the file.
- * @param file_name Name to save the file to on the server.
- * @return void
- */
-void box_ftp_upload(
-  unsigned char* data,
-  int length,
-  const char* file_name
-);
-
 #endif /* _BOX_NET_H */

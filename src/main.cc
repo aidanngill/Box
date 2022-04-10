@@ -15,12 +15,13 @@
 
 #include "./camera.h"
 #include "./net.h"
+#include "./notification.h"
 #include "./util.h"
 
 #include "./defs/config.h"
 
-void setup() {
-#ifdef DEBUG_MODE
+void box_setup() {
+#ifdef BOX_DEBUG_MODE
   Serial.begin(115200);
   Serial.setDebugOutput(true);
 #endif
@@ -30,11 +31,14 @@ void setup() {
   // If a reset is triggered by a brownout or from the reset button itself,
   // then we instantly go to sleep to skip out on potentially causing another
   // brownout from power heavy functions like WiFi initialization.
-  if (
-    esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_EXT0 &&
-    digitalRead(BOX_INFRARED_PIN) == LOW
-  ) {
+  if (esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_EXT0
+   || digitalRead(BOX_INFRARED_PIN) == LOW) {
     log_d("Wakeup was not caused by GPIO, exiting");
+    return;
+  }
+
+  if (BOX_NOTIFICATION_TYPE == NOTIFICATION_NONE) {
+    log_d("Notifications are not configured");
     return;
   }
 
@@ -71,7 +75,19 @@ void setup() {
       );
     }
 
-    box_ftp_upload(fb->buf, fb->len, time_string_buffer);
+    switch (BOX_NOTIFICATION_TYPE) {
+      case NOTIFICATION_DISCORD: {
+        box_notify_discord(fb->buf, fb->len);
+      } break;
+      case NOTIFICATION_FTP: {
+        box_notify_ftp(fb->buf, fb->len, time_string_buffer);
+      } break;
+      default: {
+        log_w("Unknown notification type specified");
+        break;
+      }
+    }
+
     box_wifi_disconnect();
   } else {
     log_e("Failed to initialize WiFi");
@@ -80,6 +96,9 @@ void setup() {
   esp_camera_fb_return(fb);
 }
 
-void loop() {
+void setup() {
+  box_setup();
   box_sleep_start();
 }
+
+void loop() {}

@@ -10,18 +10,10 @@
  */
 
 #include <WiFi.h>
-#include <ESP32_FTPClient.h>
 
 #include "./net.h"
 
 #include "./defs/config.h"
-
-ESP32_FTPClient BoxFTP(
-  BOX_FTP_HOST,
-  BOX_FTP_PORT,
-  BOX_FTP_USER,
-  BOX_FTP_PASS
-);
 
 bool box_wifi_init(const char* ssid, const char* password) {
   WiFi.begin(ssid, password);
@@ -40,22 +32,4 @@ bool box_wifi_init(const char* ssid, const char* password) {
 void box_wifi_disconnect() {
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
-}
-
-void box_ftp_upload(
-  unsigned char* data,
-  int length,
-  const char* file_name
-) {
-  BoxFTP.OpenConnection();
-  BoxFTP.InitFile("Type I");
-  BoxFTP.ChangeWorkDir("/srv/ftp/box");
-  BoxFTP.NewFile(file_name);
-  BoxFTP.WriteData(data, length);
-  BoxFTP.CloseFile();
-
-  log_d(
-    "Successfully uploaded %d bytes to '%s' on the FTP server",
-    length, file_name
-  );
 }

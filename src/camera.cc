@@ -72,7 +72,7 @@ bool box_camera_init(uint16_t _delay) {
     s->set_saturation(s, -2); // lower the saturation
   }
 
-  s->set_framesize(s, FRAMESIZE_SVGA);
+  s->set_framesize(s, FRAMESIZE_UXGA);
 
 #if defined(CAMERA_MODEL_M5STACK_WIDE) || defined(CAMERA_MODEL_M5STACK_ESP32CAM)
   s->set_vflip(s, 1);
